@@ -6,6 +6,10 @@ joyeuse:
         - Portrait
         - Landscape
         - InvertedLandscape
+    FlashlightSysfsPath:
+        - /sys/class/leds/flashlight/brightness
+    FlashlightSwitchPath:
+        - /sys/class/leds/led:switch_0/brightness
     DoubleTapToWake:
         - /sys/touchpanel/double_tap|1|0
     MirAndroidPlatformClientEglFlush:
