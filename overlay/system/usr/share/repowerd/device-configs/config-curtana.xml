@@ -53,6 +53,7 @@
          Must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLevels">
         <item>1</item> <!-- pitch black -->
+        <item>3</item> <!-- very dark indoor -->
         <item>5</item> <!-- dark indoor -->
         <item>10</item> <!-- twilight -->
         <item>50</item> <!-- dim indoor -->
@@ -87,6 +88,7 @@
          The brightness values must be between 0 and 255 and be non-decreasing.
          This must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLcdBacklightValues">
+	<item>1</item>
         <item>16</item>
         <item>20</item>
         <item>24</item>
