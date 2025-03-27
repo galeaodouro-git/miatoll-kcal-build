@@ -20,3 +20,6 @@ curtana:
         - true
     LomiriInteractiveBlur:
         - true
+    OfonoPlugin: binder
+    OfonoImplementsIms: true
+
