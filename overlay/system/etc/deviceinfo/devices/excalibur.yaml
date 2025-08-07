@@ -22,4 +22,5 @@ excalibur:
         - true
     OfonoPlugin: binder
     OfonoImplementsIms: true
+    FilesystemEncryption: true
 
