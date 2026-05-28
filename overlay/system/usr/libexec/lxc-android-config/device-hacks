@@ -22,3 +22,41 @@ setprop ubuntu.widi.supported 1
 # restart hfd service to enable vibrations
 systemctl restart hfd-service.service
 
+# Silence Android init failing to find a QCOM service for cacert management
+systemctl start dummy_cacert.service
+
+# Post-boot recovery update. This is done because old versions of recovery is
+# missing the entry for recovery partition in fstab, which means recovery
+# couldn't be updated automatically.
+
+recovery_part=/dev/disk/by-partlabel/recovery
+recovery_base=/opt/recovery-update
+recovery_file=${recovery_base}/recovery.img.xz
+recovery_size_file=${recovery_base}/recovery.img_size
+recovery_hash_file=${recovery_base}/recovery.img_sha256sum
+
+if  [ -e ${recovery_file} ] && \
+    [ -e ${recovery_size_file} ] && \
+    [ -e ${recovery_hash_file} ] \
+; then
+    recovery_size=$(cat "$recovery_size_file")
+    recovery_hash=$(cat "$recovery_hash_file")
+    recovery_part_size=$(blockdev --getsize64 "$recovery_part")
+
+    # Sanity check: image size must be less than or equal to partition size.
+    if [ "$recovery_size" -gt "$recovery_part_size" ]; then
+        echo "WARNING: recovery image is larger than partition." \
+             "Can't update recovery." >&2
+        exit 1
+    fi
+
+    recovery_part_hash=$(
+        head -c "$recovery_size" "$recovery_part" | sha256sum | cut -d' ' -f1)
+
+    if [ "$recovery_hash" = "$recovery_part_hash" ]; then
+        echo "Recovery partition is up-to-date." >&2
+    else
+        xzcat "$recovery_file" >"$recovery_part"
+        echo "Recovery partition is updated to hash ${recovery_hash}." >&2
+    fi
+fi
