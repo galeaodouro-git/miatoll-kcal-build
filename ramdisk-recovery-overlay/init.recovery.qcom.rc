@@ -25,23 +25,6 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-on init
-    setprop sys.usb.configfs 1
-
 on fs
     wait /dev/block/platform/soc/${ro.boot.bootdevice}
     symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
-
-on post-fs-data
-   start setup_fake_cache
-   wait_for_prop halium.datamount.done 1
-
-service setup_logical /system/bin/setup_logical.sh
-    user root
-    group root
-    seclabel u:r:recovery:s0
-    oneshot
-
-service setup_fake_cache /bin/sh /setup_fake_cache.sh
-   disabled
-   oneshot
