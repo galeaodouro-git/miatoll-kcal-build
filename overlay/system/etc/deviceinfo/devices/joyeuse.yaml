@@ -23,4 +23,17 @@ joyeuse:
     OfonoPlugin: binder
     OfonoImplementsIms: true
     FilesystemEncryption: true
+    CollapsedPanelHeight: 101
+    DisplayCutoutsCollapsed:
+        - 0 0 29 101
+        - 504 0 72 101
+        - 1051 0 29 101
+    DisplayCutoutsCollapsedLight:
+        - 0 0 29 101
+        - 504 0 72 101
+        - 1051 0 29 101
+    DisplayCutoutsExpanded:
+        - 0 0 29 147
+        - 504 0 72 147
+        - 1051 0 29 147
 
