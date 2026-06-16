@@ -26,11 +26,11 @@ joyeuse:
     CollapsedPanelHeight: 101
     DisplayCutoutsCollapsed:
         - 0 0 29 101
-        - 504 0 72 101
+        - 491 0 90 101
         - 1051 0 29 101
     DisplayCutoutsCollapsedLight:
         - 0 0 29 101
-        - 504 0 72 101
+        - 491 0 90 101
         - 1051 0 29 101
     DisplayCutoutsExpanded:
         - 0 0 29 147
