@@ -1,1 +1,2 @@
 ro.systemimage.system_partition_size=3500
+ro.systemimage.remove_dynparts=product
