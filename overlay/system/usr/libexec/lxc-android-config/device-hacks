@@ -22,3 +22,52 @@ setprop ubuntu.widi.supported 1
 # restart hfd service to enable vibrations
 systemctl restart hfd-service.service
 
+# Post-boot recovery update. This is done because old versions of recovery is
+# missing the entry for recovery partition in fstab, which means recovery
+# couldn't be updated automatically.
+
+recovery_part=/dev/disk/by-partlabel/recovery
+recovery_base=/cache/recovery-update
+recovery_metadata_base=/opt/recovery-update
+recovery_file=${recovery_base}/recovery.img
+recovery_size_file=${recovery_metadata_base}/recovery.img_size
+recovery_hash_file=${recovery_metadata_base}/recovery.img_sha256sum
+
+if  [ -e ${recovery_file} ] && \
+    [ -e ${recovery_size_file} ] && \
+    [ -e ${recovery_hash_file} ] \
+; then
+    recovery_size=$(cat "$recovery_size_file")
+    recovery_hash=$(cat "$recovery_hash_file")
+
+    # Integrity check: because recovery image is delivered in /userdata which
+    # does not "guarantee" immutability, check its size and hash against
+    # metadata kept inside rootfs.
+    if ! { \
+        [ "$(wc -c <"$recovery_file")" = "$recovery_size" ] && \
+        [ "$(sha256sum "$recovery_file" | cut -d' ' -f1)" = "$recovery_hash" ]
+    }; then
+        echo "WARNING: recovery image is possibly corrupted." \
+             "Can't update recovery." >&2
+        exit 1
+    fi
+
+    # Sanity check: image size must be less than or equal to partition size.
+    recovery_part_size=$(blockdev --getsize64 "$recovery_part")
+    if [ "$recovery_size" -gt "$recovery_part_size" ]; then
+        echo "WARNING: recovery image is larger than partition." \
+             "Can't update recovery." >&2
+        exit 1
+    fi
+
+    if head -c "$recovery_size" "$recovery_part" | cmp -s "$recovery_file"; then
+        echo "Recovery partition is up-to-date." >&2
+    else
+        cat "$recovery_file" >"$recovery_part"
+        echo "Recovery partition is updated to hash ${recovery_hash}." >&2
+    fi
+
+    # Finally, remove recovery image in userdata to return this space for other
+    # purposes. This also preverts updater from running again.
+    rm -v "$recovery_file"
+fi
