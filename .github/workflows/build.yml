@@ -25,6 +25,8 @@ jobs:
         run: |
           chmod +x build.sh include-recovery-in-userdata.sh
           ./build.sh
+          tar -xvf out/device_miatoll.tar.xz partitions/boot.img
+          mv partitions/boot.img out/boot.img
 
       - name: Upload boot.img artifact
         uses: actions/upload-artifact@v4
